@@ -1,0 +1,11 @@
+@startuml
+Client -> Controller : GET: /matches
+Controller -> Controller: Validate inputs
+Controller -> Service : search
+Service -> MatchesRepository
+MatchesRepository -> Database: query
+Database --> MatchesRepository: matches
+MatchesRepository --> Service: matches
+Service --> Controller: matches
+Controller --> Client: result
+@enduml

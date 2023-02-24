@@ -1,0 +1,38 @@
+@startuml
+
+!theme plain
+top to bottom direction
+skinparam linetype ortho
+
+class match {
+   tournamentId: uuid
+   homeTeamId: uuid
+   awayTeamId: uuid
+   startAt: timestamp with time zone
+   endAt: timestamp with time zone
+   homeTeanScore: integer
+   awayTeamScore: integer
+   createdAt: timestamp
+   updatedAt: timestamp
+   id: uuid
+}
+class team {
+   name: varchar
+   image: varchar
+   description: varchar
+   createdAt: timestamp
+   updatedAt: timestamp
+   id: uuid
+}
+class tournament {
+   name: varchar
+   description: varchar
+   createdAt: timestamp
+   updatedAt: timestamp
+   id: uuid
+}
+
+team "1" *-- "0..*" match: "homeTeamId:id"
+team "1" *-- "0..*" match: "awayTeamId:id"
+tournament "1" *-- "0..*" match
+@enduml

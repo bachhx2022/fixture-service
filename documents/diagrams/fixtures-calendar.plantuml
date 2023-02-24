@@ -1,0 +1,25 @@
+@startuml
+actor       Client
+
+Client -> Controller : GET: /matches/calendar
+Controller -> Controller: Validate inputs
+Controller -> Service : getCalendar
+Service  -> Service: build cache key
+alt Cache hit
+
+    Service -> Cache: get from cache by key
+    Cache --> Service: cached dates
+ 
+else Cache miss
+
+    Service -> MatchesRepository
+    MatchesRepository -> Database: query all available dates
+    Database --> MatchesRepository: dates
+    MatchesRepository --> Service: dates
+    Service -> Cache: set cache data
+end
+
+Service --> Controller: dates
+Controller --> Client: result
+
+@enduml

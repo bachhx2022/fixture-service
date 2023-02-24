@@ -1,0 +1,46 @@
+version: '3.8'
+services:    
+  cache:
+    image: redis:6.2-alpine
+    restart: always
+    ports:
+      - '6379:6379'
+    command: redis-server --save 20 1 --loglevel warning --requirepass eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81
+    volumes: 
+      - cache:/data
+  db:
+    image: postgres:14.1-alpine
+    restart: always
+    environment:
+      DATABASE_HOST: localhost
+      DATABASE_PORT: 5432
+      DATABASE_NAME: fixtures
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      PGDATA: /data/postgres
+    ports:
+      - '5432:5432'
+    volumes:   
+      - ./db:/docker-entrypoint-initdb.d/
+  fixture-service:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+      target: development
+    command: npm run start:dev
+    env_file:
+      - ./.env
+    depends_on:
+      - db            
+      - cache
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    ports:
+      - '3000:3000'
+  
+volumes:
+  db:
+    driver: local
+  cache:
+    driver: local
